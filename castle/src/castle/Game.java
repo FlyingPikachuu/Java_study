@@ -11,14 +11,39 @@ import java.util.Scanner;
 //代码冗长，代码复制多，使用函数解决
 //耦合性高（内容耦合），关于出口的代码过多，不宜维护，使用封装降低耦合
 public class Game {
+    private class HandlerGo implements Handler{
+        @Override
+        public void doCmd(String word) {
+            goRoom(word);
+        }
+    }
+    private class HandlerHelp implements Handler{
+        @Override
+        public void doCmd(String word) {
+            System.out.println("迷路了吗？你可以做的命令有：" + helpPrompt());
+            System.out.println("如：\tgo east");
+        }
+    }
+
+    private class HandlerBye implements Handler{
+        @Override
+        public void doCmd(String word) {
+
+        }
+
+        @Override
+        public boolean isBye() {
+            return true;
+        }
+    }
     private Room currentRoom;
     private HashMap<String,Handler> handlers = new HashMap<String,Handler>();
     public Game() 
     {
-        handlers.put("bye",new HandlerBye(this));
-        handlers.put("help",new HandlerHelp(this));
-        handlers.put("go",new HandlerGo(this));
-        handlers.put("direction",new HandlerHelp(this));
+        handlers.put("bye",new HandlerBye());
+        handlers.put("help",new HandlerHelp());
+        handlers.put("go",new HandlerGo());
+        handlers.put("direction",new HandlerHelp());
         createRooms();
 
     }
@@ -82,7 +107,7 @@ public class Game {
         System.out.println(currentRoom.getExitDesc());
         System.out.println();
     }
-    public  String helpprompt(){
+    public  String helpPrompt(){
         StringBuffer sb = new StringBuffer();
         for (String k :
                 handlers.keySet()) {
